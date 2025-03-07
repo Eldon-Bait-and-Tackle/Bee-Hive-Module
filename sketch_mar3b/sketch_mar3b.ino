@@ -4,8 +4,6 @@
 
 
 typedef struct {
-
-  byte module_id[6];
   byte user_auth[8];
 
   float heat;
@@ -16,14 +14,13 @@ typedef struct {
 
 
 byte mac[6];
-byte self_id[6];
 byte user_id[8];
 
 
 
 const char* domain = "http://181.214.153.183";
 const char* pass = "12345678";
-const char* router = "SADIE";
+const char* router = "Hunter’s iPhone";
 
 
 
@@ -62,7 +59,9 @@ int transmit_packet(Packet_t packet){
     http.begin(client, domain);
     http.addHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    String request_data = ("module_id=" + bytes_to_string(packet.module_id, 6) + 
+    int ard = 10;
+
+    String request_data = ("module_id=" + String(ESP.getChipId()) +
                            "&user_auth="+ bytes_to_string(packet.user_auth, 8) + 
                            "&heat=" + String(packet.heat) + 
                            "&moisture=" + String(packet.moisture) + 
@@ -136,7 +135,6 @@ void setup(){
 }
 
 Packet_t working_packet = {
-    .module_id = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06},
     .user_auth = {0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6, 0xA7, 0xB8},
 
     .heat = 25.5,
