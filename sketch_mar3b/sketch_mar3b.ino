@@ -18,9 +18,9 @@ byte user_id[8];
 
 
 
-const char* domain = "http://181.214.153.183";
-const char* pass = "12345678";
-const char* router = "Hunter’s iPhone";
+const String domain = "127.0.0.1:52067";
+const String pass = "onmyhonor";
+const String router = "optix";
 
 
 
@@ -67,6 +67,7 @@ int transmit_packet(Packet_t packet){
                            "&moisture=" + String(packet.moisture) + 
                            "&mac=" + bytes_to_string(mac, 6));
 
+
     int http_code = http.POST(request_data);
 
     if(http_code == HTTP_CODE_OK){
@@ -75,7 +76,7 @@ int transmit_packet(Packet_t packet){
       return 0;
     }
     else{
-    http.end();
+      http.end();
       return 2;
     }
   } else{
@@ -85,6 +86,36 @@ int transmit_packet(Packet_t packet){
 
 
   return 1;
+}
+
+
+int connect_wifi(){
+
+  if(WiFi.status() == WL_CONNECTED){
+    return 0;
+  }
+
+  WiFi.disconnect();
+  delay(300);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(router, pass);
+
+  int attempts = 0;
+  
+  // Try to connect with timeout
+  while ((WiFi.status() != WL_CONNECTED) && (attempts < 10)) {
+    attempts++;
+    delay(500);
+  }
+  
+  if (WiFi.status() == WL_CONNECTED) {
+    WiFi.macAddress(mac);
+    return 0;
+  }
+
+  return 1;
+
 }
 
 
@@ -100,43 +131,19 @@ void setup(){
 
   Serial.print("Connecting to WiFi network: ");
   Serial.println(router);
+  Serial.println(ESP.getChipId());
 
 
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(router, pass);
+  int connection = connect_wifi();
 
-  WiFi.beginSmartConfig();
-
-  int timeout = 10;
-
-  while(WiFi.status() != WL_CONNECTED && timeout > 0){
-
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(1000);
-    digitalWrite(LED_BUILTIN, HIGH);
-    Serial.print(".");
-
-    timeout--;
+  if(connection == 0){
+    Serial.println("Could not connect to wifi on start up...");
   }
-
-  if(WiFi.status() == WL_CONNECTED){
-    WiFi.macAddress(mac); 
-    Serial.println("WiFi connected successfully!");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
-    Serial.print("MAC address: ");
-    Serial.println(bytes_to_string(mac, 6));
-  }
-  
-
-  // This only runs when we are connected to the wifi on the router...
-
 
 }
 
 Packet_t working_packet = {
     .user_auth = {0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6, 0xA7, 0xB8},
-
     .heat = 25.5,
     .moisture = 72.3
   };
@@ -144,42 +151,55 @@ Packet_t working_packet = {
 
 void loop(){
 
-  Serial.println("TEST");
+  delay(1000);
 
-  if(WiFi.status() == WL_CONNECTED){
-    Serial.println("WiFi has magically connected");
+  Serial.println("Loop Started");
+
+  if(WiFi.status() != WL_CONNECTED){
+
+    Serial.println("No connection, attempting to reconnect");
+    int connected = connect_wifi();
+
+    if(connected == 1){
+      Serial.println("unable to connect to wifi on loop...");
+    }
+    else{
+      Serial.println("Connected to wifi on loop...");
+    }
   }
-
 
   int result = transmit_packet(working_packet);
   if(result == 0){
     // successfull packet transmition
 
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(500);
+    digitalWrite(LED_BUILTIN, HIGH);
 
-  } else if (result == 1){
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(200);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(200);
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(200);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(200);
-      
-  } else{
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(200);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(200);
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(200);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(200);
-      digitalWrite(LED_BUILTIN, LOW);
-      delay(200);
-      digitalWrite(LED_BUILTIN, HIGH);
-      delay(200);
-    
+  } 
+  else if (result == 1){
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
+  } 
+  else{
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(200);
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(200);
   }
 
 
