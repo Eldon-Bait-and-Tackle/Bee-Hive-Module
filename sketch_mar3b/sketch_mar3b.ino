@@ -18,9 +18,9 @@ byte user_id[8];
 
 
 
-const String domain = "127.0.0.1:52067";
-const String pass = "onmyhonor";
-const String router = "optix";
+const char* domain = "181.41.202.157:28170";
+const char* pass = "onmyhonor";
+const char* router = "optix_legacy";
 
 
 
@@ -171,6 +171,7 @@ void loop(){
   int result = transmit_packet(working_packet);
   if(result == 0){
     // successfull packet transmition
+    Serial.println("Transmition successsful");
 
     digitalWrite(LED_BUILTIN, LOW);
     delay(500);
