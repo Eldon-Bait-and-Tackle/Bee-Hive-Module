@@ -2,13 +2,13 @@
 
  ### Video
 
- [Video](https://www.example.com)
+[ [Video]([https://www.example.com](https://youtu.be/ZOiPz-I9Rgk))](https://youtu.be/ZOiPz-I9Rgk)
 
 ### Module Schematics 
 
 Here is the schematic for the project. There are a few notes. For our final sensors, we are considering using a humidity and temperature sensor separately as we have come into ownership of a large number of DHT11 sensors and it would be a large cost saving for us, This however wouldn't require a change in the wiring diagram and you could keep the input pins the same. Another thing is that we are still deciding on the actual Arduino module. I have found another module that has a built-in battery charger and voltage regulator, which would simplify the solar charging mechanism, but has a larger associated cost. In the future, I will update the diagram or include it in a separate release.
-![The schematic for the project](schematic.png)
-![Wiring diagram](wire_diagram.png)
+![The schematic for the project](schem.png)
+![Wiring diagram](wire.png)
 
 ### Ongoing Development
 
