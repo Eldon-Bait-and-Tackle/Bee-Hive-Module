@@ -2,6 +2,10 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 
+#include <ArduinoJson.h>
+#include <Crypto.h>
+#include <SHA256.h>
+
 #define BATTERY_PIN D4
 #define T_PIN D6
 #define M_PIN D7
